@@ -48,7 +48,11 @@ dependencies = [
   "openinference-instrumentation>=0.1.60",
   "openinference-instrumentation-openai>=0.1.41",
   "sqlglot==30.18.0",
-  "sqlalchemy[asyncio]>=2.0.46, <3",
+  # Capped below 2.1 pending a deliberate migration: 2.1 made `Select` variadic
+  # over its column types (`Select[int, str]`) instead of generic over the row
+  # tuple (`Select[tuple[int, str]]`), which invalidates ~140 annotations and
+  # unpacking sites across the db/ and server/api/ layers.
+  "sqlalchemy[asyncio]>=2.0.46, <2.1",
   "alembic>=1.3.0, <2",
   "aiosqlite>=0.22.1",
   "aioitertools",
@@ -60,7 +64,7 @@ dependencies = [
   "fastapi>=0.137.0",  # 0.137 keeps included routers as a lazy _IncludedRouter tree; older versions raise AssertionError on 204 routes, see https://github.com/Arize-ai/phoenix/issues/12384
   "fastmcp-slim[client,server]>=4,<5",  # client: pydantic-ai's MCPToolset, used by the agent assistant. server: the in-process MCP server mounted at /mcp.
   # Code-mode sandbox. Direct, not via fastmcp's `code-mode` extra, whose exact `pydantic-monty` pin conflicts and would ship in wheel metadata.
-  "pydantic-monty==0.0.23",
+  "pydantic-monty==1.0.0",
   "pydantic>=2.1.0", # exclude 2.0.* since it does not support the `json_encoders` configuration setting
   "pydantic-ai-slim[anthropic,bedrock,google,mcp,openai,ui]>=2.34.0,<3",
   # Arrives via pydantic-ai-slim[anthropic], which sets no upper bound. Pinned
